@@ -19,16 +19,18 @@
 
 package net.technicpack.solder.io;
 
+import net.technicpack.platform.io.PlatformPackInfo;
 import net.technicpack.rest.RestObject;
+import net.technicpack.rest.io.PackInfo;
 
 import java.util.LinkedHashMap;
 
 public class FullModpacks extends RestObject {
 
-    private LinkedHashMap<String, SolderPackInfo> modpacks;
+    private LinkedHashMap<String, PlatformPackInfo> modpacks;
     private String mirror_url;
 
-    public LinkedHashMap<String, SolderPackInfo> getModpacks() {
+    public LinkedHashMap<String, PlatformPackInfo> getModpacks() {
         return modpacks;
     }
 

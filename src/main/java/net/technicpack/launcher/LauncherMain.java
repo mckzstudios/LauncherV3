@@ -179,36 +179,18 @@ public class LauncherMain {
         resources.setSupportedLanguages(supportedLanguages);
         resources.setLocale(settings.getLanguageCode());
 
-        if (params.getBuildNumber() != null && !params.getBuildNumber().isEmpty())
-            buildNumber = new CommandLineBuildNumber(params);
-        else
-            buildNumber = new VersionFileBuildNumber(resources);
+        buildNumber = new IBuildNumber() {
+            @Override
+            public String getBuildNumber() {
+                return "80014";
+            }
+        };
 
         TechnicConstants.setBuildNumber(buildNumber);
 
         setupLogging(directories, resources);
 
-        String launcherBuild = buildNumber.getBuildNumber();
-        int build = -1;
-
-        try {
-            build = Integer.parseInt((new VersionFileBuildNumber(resources)).getBuildNumber());
-        } catch (NumberFormatException ex) {
-            //This is probably a debug build or something, build number is invalid
-        }
-
-        Relauncher launcher = new TechnicRelauncher(new HttpUpdateStream("http://api.technicpack.net/launcher/"), settings.getBuildStream()+"4", build, directories, resources, params);
-
-        try {
-            if (launcher.runAutoUpdater())
-                startLauncher(settings, params, directories, resources);
-        } catch (InterruptedException e) {
-            //Canceled by user
-        } catch (DownloadException e) {
-            //JOptionPane.showMessageDialog(null, resources.getString("launcher.updateerror.download", pack.getDisplayName(), e.getMessage()), resources.getString("launcher.installerror.title"), JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        startLauncher(settings, params, directories, resources);
     }
 
     private static void setupLogging(LauncherDirectories directories, ResourceLoader resources) {
@@ -218,7 +200,7 @@ public class LauncherMain {
         if (!logDirectory.exists()) {
             logDirectory.mkdir();
         }
-        File logs = new File(logDirectory, "techniclauncher_%D.log");
+        File logs = new File(logDirectory, "crewmclauncher_%D.log");
         RotatingFileHandler fileHandler = new RotatingFileHandler(logs.getPath());
 
         fileHandler.setFormatter(new BuildLogFormatter(buildNumber.getBuildNumber()));

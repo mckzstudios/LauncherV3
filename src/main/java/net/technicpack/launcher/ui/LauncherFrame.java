@@ -128,9 +128,7 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
 
     private ModpackOptionsDialog modpackOptionsDialog = null;
 
-    private HeaderTab discoverTab;
     private HeaderTab modpacksTab;
-    private HeaderTab newsTab;
 
     private CardLayout infoLayout;
     private JPanel infoSwap;
@@ -146,9 +144,7 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
 
     private String currentTabName;
 
-    NewsInfoPanel newsInfoPanel;
     ModpackInfoPanel modpackPanel;
-    DiscoverInfoPanel discoverInfoPanel;
 
     public LauncherFrame(final ResourceLoader resources, final ImageRepository<IUserType> skinRepository, final UserModel userModel, final TechnicSettings settings, final ModpackSelector modpackSelector, final ImageRepository<ModpackModel> iconRepo, final ImageRepository<ModpackModel> logoRepo, final ImageRepository<ModpackModel> backgroundRepo, final Installer installer, final ImageRepository<AuthorshipInfo> avatarRepo, final IPlatformApi platformApi, final LauncherDirectories directories, final IInstalledPackRepository packRepository, final StartupParameters params, final DiscoverInfoPanel discoverInfoPanel, final JavaVersionRepository javaVersions, final FileJavaSource fileJavaSource, final IBuildNumber buildNumber, final IDiscordApi discordApi) {
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -168,7 +164,6 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
         this.directories = directories;
         this.packRepo = packRepository;
         this.params = params;
-        this.discoverInfoPanel = discoverInfoPanel;
         this.fileJavaSource = fileJavaSource;
         this.javaVersions = javaVersions;
         this.buildNumber = buildNumber;
@@ -177,7 +172,7 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
         //Handles rebuilding the frame, so use it to build the frame in the first place
         relocalize(resources);
 
-        selectTab("discover");
+        selectTab(TAB_MODPACKS);
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -194,18 +189,10 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
     /////////////////////////////////////////////////
 
     public void selectTab(String tabName) {
-        discoverTab.setIsActive(false);
         modpacksTab.setIsActive(false);
-        newsTab.setIsActive(false);
 
-        if (tabName.equalsIgnoreCase(TAB_DISCOVER))
-            discoverTab.setIsActive(true);
-        else if (tabName.equalsIgnoreCase(TAB_MODPACKS))
+        if (tabName.equalsIgnoreCase(TAB_MODPACKS))
             modpacksTab.setIsActive(true);
-        else if (tabName.equalsIgnoreCase(TAB_NEWS)) {
-            newsTab.setIsActive(true);
-            newsSelector.ping();
-        }
 
         infoLayout.show(infoSwap, tabName);
 
@@ -397,7 +384,7 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
         headerLabel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DesktopUtils.browseUrl("https://www.technicpack.net/");
+                DesktopUtils.browseUrl("https://www.thecrewrp.net/");
             }
         });
         header.add(headerLabel);
@@ -411,30 +398,12 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
             }
         };
 
-        discoverTab = new HeaderTab(resources.getString("launcher.title.discover"), resources);
-        header.add(discoverTab);
-        discoverTab.setActionCommand(TAB_DISCOVER);
-        discoverTab.addActionListener(tabListener);
-
         modpacksTab = new HeaderTab(resources.getString("launcher.title.modpacks"), resources);
         modpacksTab.setIsActive(true);
         modpacksTab.setHorizontalTextPosition(SwingConstants.LEADING);
         modpacksTab.addActionListener(tabListener);
         modpacksTab.setActionCommand(TAB_MODPACKS);
         header.add(modpacksTab);
-
-        newsTab = new HeaderTab(resources.getString("launcher.title.news"), resources);
-        newsTab.setLayout(null);
-        newsTab.addActionListener(tabListener);
-        newsTab.setActionCommand(TAB_NEWS);
-        header.add(newsTab);
-
-        CountCircle newsCircle = new CountCircle();
-        newsCircle.setBackground(COLOR_RED);
-        newsCircle.setForeground(COLOR_WHITE_TEXT);
-        newsCircle.setFont(resources.getFont(ResourceLoader.FONT_OPENSANS, 16, Font.BOLD));
-        newsTab.add(newsCircle);
-        newsCircle.setBounds(10,17,25,25);
 
         header.add(Box.createHorizontalGlue());
 
@@ -554,19 +523,12 @@ public class LauncherFrame extends DraggableFrame implements IRelocalizableResou
         infoLayout = new CardLayout();
         infoSwap.setLayout(infoLayout);
         infoSwap.setOpaque(false);
-        newsInfoPanel = new NewsInfoPanel(resources, avatarRepo);
-        infoSwap.add(discoverInfoPanel,"discover");
 
         JPanel newsHost = new JPanel();
         infoSwap.add(newsHost, "news");
         JPanel modpackHost = new JPanel();
         infoSwap.add(modpackHost, "modpacks");
         centralPanel.add(infoSwap, BorderLayout.CENTER);
-
-        newsSelector = new NewsSelector(resources, newsInfoPanel, platformApi, avatarRepo, newsCircle, settings);
-        newsHost.setLayout(new BorderLayout());
-        newsHost.add(newsInfoPanel, BorderLayout.CENTER);
-        newsHost.add(newsSelector, BorderLayout.WEST);
 
         modpackHost.setLayout(new BorderLayout());
         modpackHost.add(modpackPanel, BorderLayout.CENTER);

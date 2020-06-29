@@ -2,6 +2,7 @@ package net.technicpack.launchercore.modpacks.sources;
 
 import net.technicpack.launchercore.modpacks.MemoryModpackContainer;
 import net.technicpack.launchercore.modpacks.ModpackModel;
+import net.technicpack.platform.io.PlatformPackInfo;
 import net.technicpack.rest.io.PackInfo;
 
 import java.util.Collection;

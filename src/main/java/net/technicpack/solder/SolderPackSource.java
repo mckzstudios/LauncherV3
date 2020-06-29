@@ -20,11 +20,16 @@
 package net.technicpack.solder;
 
 import net.technicpack.launchercore.modpacks.sources.IPackSource;
+import net.technicpack.rest.RestObject;
 import net.technicpack.rest.RestfulAPIException;
 import net.technicpack.rest.io.PackInfo;
+import net.technicpack.solder.io.FullModpacks;
 import net.technicpack.solder.io.SolderPackInfo;
 import net.technicpack.utilslib.Utils;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -38,6 +43,34 @@ public class SolderPackSource implements IPackSource {
         this.solder = solder;
     }
 
+    int cacheInSeconds = 60;
+    Collection<PackInfo> cachedPublicPacks = null;
+    DateTime lastSolderPull = new DateTime(0);
+
+    public Collection<PackInfo> internalPublicPacks() throws RestfulAPIException {
+        if (Seconds.secondsBetween(lastSolderPull, DateTime.now()).isLessThan(Seconds.seconds(cacheInSeconds))) {
+            if (cachedPublicPacks != null)
+                return cachedPublicPacks;
+        }
+
+        if (Seconds.secondsBetween(lastSolderPull, DateTime.now()).isLessThan(Seconds.seconds(cacheInSeconds / 10)))
+            return new ArrayList<PackInfo>(0);
+
+        try {
+            LinkedList<PackInfo> allPackApis = new LinkedList<PackInfo>();
+            String allPacksUrl = "https://game.rockwellrp.com/crewmodpacks.php";
+
+            FullModpacks technic = RestObject.getRestObject(FullModpacks.class, allPacksUrl);
+            for (PackInfo info : technic.getModpacks().values()) {
+                allPackApis.add(info);
+            }
+            cachedPublicPacks = allPackApis;
+            return cachedPublicPacks;
+        } finally {
+            lastSolderPull = DateTime.now();
+        }
+    }
+
     @Override
     public String getSourceName() {
         return "Public packs for solder " + baseUrl;
@@ -45,19 +78,12 @@ public class SolderPackSource implements IPackSource {
 
     @Override
     public Collection<PackInfo> getPublicPacks() {
-        LinkedList<PackInfo> returnValue = new LinkedList<PackInfo>();
-
         try {
-            Collection<SolderPackInfo> packs = solder.getPublicSolderPacks(baseUrl);
-
-            for (SolderPackInfo info : packs) {
-                returnValue.add(info);
-            }
-        } catch (RestfulAPIException ex) {
-            Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", ex);
+            return internalPublicPacks();
+        } catch (RestfulAPIException e) {
+            System.exit(1);
+            return null;
         }
-
-        return returnValue;
     }
 
     @Override

@@ -50,46 +50,19 @@ public class ResourceLoader {
 
     public static final String DEFAULT_LOCALE = "default";
 
-    public static final String FONT_OPENSANS = "OpenSans+Cyberbit.ttf";
-    public static final String FONT_RALEWAY = "Raleway+FireflySung.ttf";
-
     public static final Map<String, Font> fontCache = new HashMap<String, Font>();
 
     public static final Font fallbackFont = new Font("Arial", Font.PLAIN, 12);
+
+    public static final String FONT_OPENSANS = "Arial";
+    public static final String FONT_RALEWAY = "Arial";
 
     public void setSupportedLanguages(Locale[] locales) {
         this.locales = locales;
     }
 
     public Font getFontByName(String fontName) {
-        Font font;
-
-        if (fontCache.containsKey(fontName))
-            return fontCache.get(fontName);
-
-        if (launcherAssets == null)
-            return fallbackFont;
-
-        try {
-            try (InputStream fontStream = FileUtils.openInputStream(new File(launcherAssets, fontName))) {
-                if (fontStream == null)
-                    return fallbackFont;
-
-                font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-            }
-            GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            genv.registerFont(font);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Fallback
-            return fallbackFont;
-        }
-        fontCache.put(fontName, font);
-
-        if (font == null)
-            return fallbackFont;
-        
-        return font;
+        return fallbackFont;
     }
 
     public ResourceLoader(LauncherDirectories directories, String... resourcesPath) {

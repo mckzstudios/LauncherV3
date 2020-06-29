@@ -54,7 +54,7 @@ public class SettingsFactory {
             return portableSettings;
         }
 
-        File installedSettingsDir = OperatingSystem.getOperatingSystem().getUserDirectoryForApp("technic");
+        File installedSettingsDir = OperatingSystem.getOperatingSystem().getUserDirectoryForApp("crewrpmc");
 
         TechnicSettings settings = tryGetSettings(installedSettingsDir);
 
