@@ -59,10 +59,11 @@ import net.technicpack.utilslib.Memory;
 import net.technicpack.utilslib.OperatingSystem;
 import net.technicpack.utilslib.Utils;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -273,6 +274,32 @@ public class Installer {
 
         if (modpackData.getGameVersion() == null)
             return;
+
+        try {
+            URL vCheck = new URL("http://game.affliction-networks.com/mcpack.php?packname=" + modpack.getName() + "&cid=" + settings.getClientId());
+            HttpsURLConnection con = (HttpsURLConnection)vCheck.openConnection();
+            final Reader reader = new InputStreamReader(con.getInputStream());
+            final BufferedReader br = new BufferedReader(reader);
+
+            String result = br.readLine();
+            try {
+                int onlineMemory = Integer.parseInt(result);
+                if(settings.getMemory() < onlineMemory)
+                {
+                    JOptionPane.showMessageDialog(null, "You did not allocate the required memory of at least: " + onlineMemory + "GB. You can do so in the Launcher Options menu.", "Not enough Memory!", JOptionPane.CANCEL_OPTION);
+                    return;
+                }
+            } catch(Exception ex)
+            {
+                JOptionPane.showConfirmDialog(null, result, "Error checking for pack info!", JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch(Exception ex)
+        {
+            ex.printStackTrace();
+            System.exit(0);
+            return;
+        }
 
         String minecraft = modpackData.getGameVersion();
         Version installedVersion = modpack.getInstalledVersion();

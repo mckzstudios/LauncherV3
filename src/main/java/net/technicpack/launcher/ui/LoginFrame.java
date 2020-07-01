@@ -128,11 +128,11 @@ public class LoginFrame extends DraggableFrame implements IRelocalizableResource
     }
 
     protected void visitTerms() {
-        DesktopUtils.browseUrl("http://thecrewrp.net/rules");
+        DesktopUtils.browseUrl("https://thecrewrp.net/");
     }
 
     protected void visitPrivacy() {
-        DesktopUtils.browseUrl("http://thecrewrp.net/rules");
+        DesktopUtils.browseUrl("https://thecrewrp.net/");
     }
 
     @Override

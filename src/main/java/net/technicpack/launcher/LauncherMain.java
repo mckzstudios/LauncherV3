@@ -101,6 +101,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -137,6 +138,9 @@ public class LauncherMain {
     };
 
     private static IBuildNumber buildNumber;
+    private static int currentVersion = 4;
+
+    public static TechnicSettings settingsInstance;
 
     public static void main(String[] argv) {
         try {
@@ -144,6 +148,35 @@ public class LauncherMain {
         } catch (Exception ex) {
             Utils.getLogger().log(Level.SEVERE, ex.getMessage(), ex);
         }
+
+        // Simple Version Check
+
+        try {
+            URL vCheck = new URL("https://game.rockwellrp.com/crewmclauncherversion.php");
+            HttpsURLConnection con = (HttpsURLConnection)vCheck.openConnection();
+            final Reader reader = new InputStreamReader(con.getInputStream());
+            final BufferedReader br = new BufferedReader(reader);
+            String result = br.readLine();
+
+            try {
+                int onlineVersion = Integer.parseInt(result);
+                if(currentVersion < onlineVersion)
+                {
+                    JOptionPane.showMessageDialog(null, "Please update your launcher manually. This version is no longer supported.", "Outdated.", JOptionPane.CANCEL_OPTION);
+                    return;
+                }
+            } catch(Exception ex)
+            {
+                JOptionPane.showConfirmDialog(null, result, "Error checking for version!", JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch(Exception ex)
+        {
+            ex.printStackTrace();
+            System.exit(0);
+            return;
+        }
+
 
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
@@ -161,6 +194,7 @@ public class LauncherMain {
 
         try {
             settings = SettingsFactory.buildSettingsObject(Relauncher.getRunningPath(LauncherMain.class), params.isMover());
+            settingsInstance = settings; // Just an easy way to get the settings globally.
         } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace();
         }
