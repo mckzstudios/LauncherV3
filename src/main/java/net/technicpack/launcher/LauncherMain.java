@@ -138,7 +138,7 @@ public class LauncherMain {
     };
 
     private static IBuildNumber buildNumber;
-    private static int currentVersion = 4;
+    private static int currentVersion = 5;
 
     public static TechnicSettings settingsInstance;
 
