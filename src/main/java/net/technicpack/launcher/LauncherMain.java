@@ -152,7 +152,7 @@ public class LauncherMain {
         // Simple Version Check
 
         try {
-            URL vCheck = new URL("https://game.rockwellrp.com/crewmclauncherversion.php");
+            URL vCheck = new URL("https://game.affliction-networks.com/crewmclauncherversion.php");
             HttpsURLConnection con = (HttpsURLConnection)vCheck.openConnection();
             final Reader reader = new InputStreamReader(con.getInputStream());
             final BufferedReader br = new BufferedReader(reader);
