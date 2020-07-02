@@ -276,7 +276,7 @@ public class Installer {
             return;
 
         try {
-            URL vCheck = new URL("http://game.affliction-networks.com/mcpack.php?packname=" + modpack.getName() + "&cid=" + settings.getClientId());
+            URL vCheck = new URL("https://game.affliction-networks.com/mcpack.php?packname=" + modpack.getName() + "&cid=" + settings.getClientId());
             HttpsURLConnection con = (HttpsURLConnection)vCheck.openConnection();
             final Reader reader = new InputStreamReader(con.getInputStream());
             final BufferedReader br = new BufferedReader(reader);

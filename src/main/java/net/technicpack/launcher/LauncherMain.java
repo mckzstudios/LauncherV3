@@ -138,7 +138,7 @@ public class LauncherMain {
     };
 
     private static IBuildNumber buildNumber;
-    private static int currentVersion = 5;
+    private static int currentVersion = 6;
 
     public static TechnicSettings settingsInstance;
 
@@ -303,7 +303,7 @@ public class LauncherMain {
         splash.getContentPane().setBackground(new Color (bg.getRed(),bg.getGreen(),bg.getBlue(),255));
         splash.pack();
         splash.setLocationRelativeTo(null);
-        splash.setVisible(true);
+        //splash.setVisible(true);
 
         // Inject new root certs for compatibility with older Java versions that don't have them
         injectNewRootCerts();
